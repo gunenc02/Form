@@ -1,0 +1,112 @@
+﻿@model Bahadır_webForm.Models.Information; 
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!-- Kullanıcınların kaydolurken karşılaşacakları ekran-->
+<!-- Bu ekranda kişiler istenilen bilgileri girmekte-->
+<!-- asp.net forms kullanılmıştır -->
+<!-- kullanıcı inputlarının doğru olup olmadığını denetleyen js fonksiyonları bulunmaktadır-->
+<!-- eğer kullanıcı rakam yazması gereken bir alanda ise kulkanıcının telefon numarası mı yoksa 
+     tc kimlik numarası mı yazdığına bakıldıktan sonra, eğer telefon numarası yazılıyorsa uygun bir şekilde
+     formatlanmakta
+-->
+<!-- kayıt işleminin düzgün gerçekleşip gerçekleşmediğine dair mesaj da sayfanın sonunda gösterilmekterdir-->
+<!-- son olarak sayfada login ekranına yönlerndirin bir buton da bulunmakta-->
+    <div>
+        <img src="~/css/Containers/KonyaLogo.png" id="logo"/>
+    </div>
+     <br />
+    <div class="aloo" >
+       
+    <h1 id="header">Form</h1>
+    <br />
+    <form method="post" asp-action="CreateEntry" asp-controller="Form" autocomplete="off">
+        <label class="textLine">Adınız: </label>
+        <input asp-for=Name type="text" id="name" onpaste="return false" class="Area" placeholder="Adınız" required/>
+        <br/><br/>
+        <label class="textLine">Soyadınız:</label>
+        <input asp-for=Surname type="text" id="surname"  onpaste="return false" class="Area" placeholder="Soyadınız" required/>
+        <br/><br/>
+        <label class="textLine">Telefon Numaranız:</label>
+        <input asp-for=PhoneNumber type="text" id="phoneNumber"  maxlength="14"  onpaste="return false" class="Number" placeholder="(500) 000 0000" required/>
+        <br/><br/>
+        <label class="textLine">TC Kimlik Numaranız:</label>
+        <input asp-for=Ssn type="text" id="ssn"  maxlength="11"  onpaste="return false" class="Number" placeholder="Tc Kimlik Numaranız" required/>
+        <br/><br/>
+        <label class="textLine">Doğum Tarihiniz:</label>
+        <input asp-for=Date type="date" id="date" class="Area" required/>
+        <br/><br/>
+        <input type="submit" class="button" value="Kayıt ol"/>
+        <button class="button" onclick="directLogin()">Admin Girişi</button>
+   </form> 
+   <!-- kayıt işleminin durumuna dair gösterilen mesaj -->
+    @if (@TempData["Message"] != null)
+    {
+        char tmp = (TempData["Message"]).ToString()[0];
+        if(tmp == '0')
+        {
+            <div class="alert alert-danger" style="border-radius:5%;">
+                @(((TempData["Message"]).ToString()).Substring(1))
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-primary" style="border-radius:5%;">
+                @(((TempData["Message"]).ToString()).Substring(1))
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    <script>
+    //kullanıcının sadece harf girmesi gerektiği input alanlarına sadece harf girmesini sağlayan fonksiyon
+    let textListen = document.getElementsByClassName('Area');
+    for (let i = 0; i < textListen.length; i++) {
+        textListen[i].addEventListener('keydown', function(event) {
+            if (
+                    (event.key >= 'a' && event.key <= 'z') || event.key === 'ı' || event.key === 'İ' || event.key === 'ö' || event.key === 'Ö' || event.key === 'ü' || event.key === 'Ü' ||  
+                    (event.key >= 'A' && event.key <= 'Z') || event.key === 'ç' || event.key === 'Ç' || event.key === 'ğ' || event.key === 'Ğ' || event.key === 'Ş' || event.key === 'ş'
+                ) {
+                    // Allow the key press      
+                    return true;
+                }
+                // Prevent the key press
+                event.preventDefault();
+                return false;
+            })  //
+        }
+    </script>
+
+    <script>
+        // kullanıcının sadece sayı girmesi gereken alanlara sadece sayı girmelerini sağlayan fonksiyon
+        let numberListen = document.getElementsByClassName('Number');
+        for (let i = 0; i < numberListen.length; i++) {
+            numberListen[i].addEventListener('keydown', function(event) {
+                // kullanıcı eğer mtelefon numarası giriyorsa kullanıcının girdğiğ değerleri formatlayan fonksiyon
+                if (numberListen[i].id === 'phoneNumber') {
+                    let x = event.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);  // regular expressions
+                    event.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? ' ' + x[3] : '');
+                }
+
+                if ((event.key >= '0' && event.key <= '9') || event.key == "Backspace" || event.key == "ArrowLeft" || event.key == "ArrowRight") {
+                    return true;
+                }
+                else {
+                    event.preventDefault();
+                    return false;
+                }
+            }); 
+        }  
+    </script>
+
+    <script>
+        // login ekranına yönlendiren buton
+        function directLogin() {
+             window.location.href = "@Url.Action("Login", "Form")";
+        }
+    </script>
+}
+
+

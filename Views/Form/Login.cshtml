@@ -1,0 +1,63 @@
+﻿@model Bahadır_webForm.Models.Admin
+<!-- Adminlerin giriş yapması için oluşturulmuş kullanıcı arayüzü-->
+<!-- Bu sayfada asp.net form kullanılmıştır -->
+<!-- Sayfada biri submit etmeye yarayan diğer ikisi ise anasayfaya dömmeye ve şifre değiştirme 
+    ekranına yönelmeyi sağlayan 3 buton bulunmakta
+-->
+<!-- Kullanıcı eğer ChangePassword ekranından başarılı bir şekilde bu sayfaya yönlendirilmiş ise şifre değiştime işleminin 
+    başarılı olduğuna dair bir sweet alert basılmakta
+-->
+<!-- ViewBagden gelen status değerinin istenilen şekilde gelmemesinden dolayı önce c# ta string e çevrilip daha sonra 
+     js fonksiyonu içerisinde string kıyaslaması yapılmıştır
+-->
+@{
+    ViewData["Title"] = "Login";
+    var status = ViewBag.Status;
+}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="row ">
+    <div class="aloo" style="width:500px;">
+        <h1>Admin Girişi</h1>
+        <hr />
+        <form asp-action="Login" method="post" asp-controller="Form" autocomplete="off">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label class="textLine">Kullanıcı adınız: </label>
+                <input asp-for=Name type="text" id="name"  maxlength="16" onpaste="return false" class="Area" required/>                
+            </div>
+            <br />
+            <div class="form-group">
+                <label class="textLine">Şifreniz:</label>
+                <input asp-for=Password type="password" id="ssn"  maxlength="16"  onpaste="return false" class="Area"  required/>
+            </div>
+            <br />
+            <div class="form-group d-flex justify-content-between">
+                <input type="submit" value="Giriş Yap" class="btn btn-primary flex-grow-1"/>
+                <a href="@Url.Action("ChangePassword", "Form")" class="btn btn-success mx-2">Şifreni Değiştir</a>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-danger flex-grow-1">Ana Sayfaya Dön</a>
+                
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // ChangePassword ekranında gerçekleşen şifre değiştirme işlemi başarılıysa sweet alert'i devreye sokan fonksiyon
+    window.onload = (event) => {
+        if ('@status' == 'True') {
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'Güncelleme başarılı',
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        }
+    }
+
+</script>
+
+
+
+

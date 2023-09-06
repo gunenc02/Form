@@ -1,0 +1,126 @@
+﻿@model System.Data.DataTable
+
+<!-- Bu sayfa adminlerin muhatap olacağı ve kaydolan kullanıcıları içeren ekrandır-->
+<!-- Asp.net form kullanılmıştır -->
+<!-- Yapılan değişliklerin veritabanına kaydeilip kaydedilmediğine dair mesaj da bulunmaktadır ancak bu mesaj formun altında gösterilmektedir-->
+<!-- Aynı zamanda Admin doğru giriş yaptığında sweet alert devreye girip bilgilendirme mesajı görüntülemektedir -->
+<!-- Bununla birlikte sweet alertler silinme işleminin onaylanması için de kullanılmaktadır-->
+@{
+    ViewData["Title"] = "ShowTable";
+    var status = ViewBag.Status;
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<a href="@Url.Action("Logout", "Form")" class="btn btn-primary" style="float:right; margin:20px;">Çıkış yap</a>
+
+<!-- Tablo -->
+
+
+ <div class="master">
+     <h3 style="text-align:center; padding-top:3%; ">Kayıt Tablosu</h3>
+     <div class="tableDiv">
+    <table class="table table-bordered table-stripped"  style="background-color:white;" >
+    <tr>
+        <th> İSİM </th>
+        <th> SOYİSİM </th>
+        <th> TELEFON NUMARASI </th>
+        <th> TC KİMLİK NO </th>
+        <th> DOĞUM TARİHİ </th>
+        <th> KAYIT TARİHİ </th>
+        <th> DÜZENLE </th>
+        <th> SİL </th>
+    </tr>
+    @for(int i = 0; i < @Model.Rows.Count; i++) {
+        <tr>
+            <td>@Model.Rows[i][1]</td>
+            <td>@Model.Rows[i][2]</td>
+            <td>@Model.Rows[i][3]</td>
+            <td>@Model.Rows[i][4]</td>
+            @{
+                /*
+                 * bu kısımda kullanıcın doğum tarihinde saat kısmı c# ta default olarak 0 ile doldurulmakta
+                 * Bundan dolayı saat kısmını göstermemek için aradaki boşluğun indexi bulunup boşluktan sonraki kısım yok sayılmaktadır 
+                 */
+
+                string dateStr = Model.Rows[i][5].ToString();
+                int index = dateStr.IndexOf(" ");
+                dateStr = dateStr.Substring(0, index);
+                        <td> @dateStr </td>
+            }
+                       
+            <td>@Model.Rows[i][6]</td>
+            <td>
+                <a href="@Url.Action("Edit", "Form", new {@id = @Model.Rows[i][0]})" class="btn btn-success">Düzenle</a>
+            </td>
+            <td>
+                <button class="btn btn-danger" onclick="deleteButton(@Model.Rows[i][0])">Sil</button>
+            </td>
+            
+        </tr>
+    }
+    </table>
+
+<!-- Silme veya düzenleme işlemlerinin durumuna dair tablonun altında yer alacak olan mesajlar -->
+
+</div>
+    @if (@TempData["Message"] != null)
+    {
+        char tmp = (TempData["Message"]).ToString()[0];
+        if(tmp == '0')
+        {
+            <div class="alert alert-danger" style="border-radius:10px; width:80%; top:95%; text-align:center; left:10%">
+               <span>@(((TempData["Message"]).ToString()).Substring(1))</span> 
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-primary" style="border-radius:10px; width:80%; top:95%; text-align:center; left:10%;">
+                <span>@(((TempData["Message"]).ToString()).Substring(1))</span>
+            </div>
+        }
+    }
+</div>
+
+<!-- Kullanıcının doğru giriş yaptığına dair sweet alert -->
+
+<script>
+    window.onload = (event) => {
+        if('@status' == 'True')
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Giriş başarılı',
+            showConfirmButton: false,
+            timer: 1500,
+        });
+    }
+
+    // silme işleminin onaylanmasına dair sweet alert
+    function deleteButton(index) {
+        Swal.fire({
+            title: 'Kaydı silmek istediğinizden emin misiniz?',
+            text: 'Bu işlem geri alınamaz',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sil',
+            cancelButtonText: 'Geri Dön'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "@Url.Action("Delete", "Form")" + "?id=" + index;
+                Swal.fire(
+                    'Silindi',
+                    'Kullanıcı başarıyla silindi',
+                    'success'
+                )
+            }
+        })
+         
+    }
+</script>
+   
+    
+
+

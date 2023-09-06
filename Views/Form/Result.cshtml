@@ -1,0 +1,95 @@
+﻿@model Bahadır_webForm.Models.Information
+
+<!-- Bu kısım kullanıcının bilgileri ekranda gösterşlmektedir ve biri "inquiry" sayfasına dönmeye
+     diğeri ise gösterilen bilgilerin bastırılmasına yarayan iki tane buton da sayfada mevcuttur
+-->
+<!-- Bilgiler gösterilirken "razorpage details" template'i kullanılmıştır-->
+
+<div>
+    <img src="~/css/Containers/KonyaLogo.png" id="logo"/>
+</div>
+
+<div class="aloo">
+    <div id="generalContent" style="top:50%; ">
+    <h4 id="topPrompt">Katılımcı bilgileri</h4>
+    <hr id="line"/>
+        <table id="dataTable">
+            <tr>
+                <td class = "modelText" style="width:200px;">
+                    <label>ID: </label>
+                </td>
+                <td class = "modelValue" style="width:200px;">
+                    @Html.DisplayFor(model => model.Id)
+                </td>
+            </tr>
+            <tr>
+                <td class = "modelText" style="width:200px;">
+                    <label>Adınız: </label>
+                </td>
+                <td class = "modelValue" style="width:200px;">
+                    @Html.DisplayFor(model => model.Name)
+                </td>
+            </tr>
+            <tr>
+                <td class = "modelText" style="width:200px;">
+                    <label>Soyadınız: </label>
+                </td>
+                <td class = "modelValue" style="width:200px;">
+                    @Html.DisplayFor(model => model.Surname)
+                </td>
+            </tr>
+             <tr>
+                <td class="modelText" style="width:200px;">
+                    <label>Telefon Numaranız: </label>
+                </td>
+                <td class ="modelValue" style="width:200px;">
+                    @Html.DisplayFor(model => model.PhoneNumber)
+                </td>
+            </tr>
+            <tr>
+                <td class="modelText" style="width:200px;">
+                    <label>TC kimlik numaranız: </label>
+                </td>
+                <td class ="modelValue" style="width:200px;">
+                    @Html.DisplayFor(model => model.Ssn)
+                </td>
+            </tr>
+            <tr>
+                <td class = "modelText" style="width:200px;">
+                    <label>Doğum gününüz: </label>
+                </td>
+                <td class = "modelValue" style="width:200px;">
+                    @Html.DisplayFor(model => model.Date)
+                </td>
+            </tr>
+            <tr>
+                <td class = "modelText" style="width:200px;">
+                    <label>Kayıt tarihiniz: </label>
+                </td>
+                <td class = "modelValue" style="width:200px;">
+                    @Html.DisplayFor(model => model.EntryDate)
+                </td>
+            </tr>
+        </table>
+        </div>
+        <br />
+    <div class="buttons">
+        <button type="button" id="print" class="btn btn-primary"  onclick="printPage()" style="border-radius:6px; height:30px; width:75px; margin-left:10%">Yazdır</button> 
+        <button onclick="prevPage()" class="btn btn-danger" id="goBack" style="border-radius:6px; width:fit-content; margin-right:10%; float:right;">Sorguya dön</button>
+    </div>
+</div>
+
+<script>
+    // "inquiry" sayfasına dönmeye yarayan butonun js fonksiyonu
+    function prevPage() {
+        window.location.href = "@Url.Action("Inquiry", "Form")";
+    }
+</script>
+
+
+<script>
+    // kullanıcı bilgilerinin bastırılmasına yarayan butonun js fonksiyonu
+    function printPage() {
+        window.print();
+}
+</script>

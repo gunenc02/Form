@@ -1,0 +1,114 @@
+﻿@model Bahadır_webForm.Models.Information
+
+<!-- Bu sayfa kullanıcının konferansta muhatap olacağı, tc kimlik numarasını girdikten sonra bilet alacağı sayfa -->
+<!-- Tc kimlik numarasının sayı olup olmadığını denetleyen js fonksiyonu içermektedir-->
+<!-- Server ile iletişim için ajax kullanıldı -->
+@{
+    ViewData["Title"] = "Inquiry";
+}
+<script src="~/lib/jquery/code.jquery.com_jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="~/css/Containers/Stylesheet.css" />
+
+<div>
+    <img src="~/css/Containers/KonyaLogo.png" id="logo"/>
+</div>
+
+<div class="aloo" style="width:400px; height:400px;">
+    <h1>Sorgu</h1>
+
+    <h4>Lütfen TC Kimlik Numaranızı giriniz</h4>
+    <hr />
+
+    <label class="textLine">TC Kimlik Numaranız:</label>
+    <br/>
+    <input class="Number" type="text" id="tcKimlikNo"  maxlength="11"  onpaste="return false" placeholder="Tc Kimlik Numaranız" style="width:90%" required/>
+    <br /> <br />
+    <button id="ajaxQuery" onclick="ajaxQueryFunction()" class="btn btn-primary" style="position:center">Sorgula</button>
+</div>
+
+
+
+
+@section Scripts{
+    <script>
+
+    // ajax fonksiyonu
+    function ajaxQueryFunction(){
+        
+        let ssn = document.getElementById('tcKimlikNo').value;
+        
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("Inquiry")",
+            dataType: "json",
+            data: { info: ssn },
+            success: function( data) {
+               
+                
+                if (data === 0) {
+                    Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Bir hatayla karşılaşıldı, lütfen daha sonra tekrar deneyiniz',
+                    showConfirmButton: false,
+                    timer: 1500,                
+                    })
+                } 
+                else if (data === -1) {
+                    Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Hiçbir eşleşme bulunamadı',
+                    showConfirmButton: false,
+                    timer: 1500,                
+                    })
+                }
+                else if (data === -2) {
+                    Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'TC kimlik numarası 11 haneli olmalı ve 0 ile başlamamalıdır',
+                    showConfirmButton: false,
+                    timer: 1500,                
+                    })
+                }
+                else {
+                    Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Eşleşme bulundu',
+                    showConfirmButton: false,
+                    timer: 1500,                
+                    })
+                    setTimeout(() => {
+                         window.location.href = `/Form/Result/${data}`;
+                    }, 2000)
+                   
+                }
+                    
+            },
+            error: function() {
+                alert("Fail");
+            }
+        });      
+    }
+    // kullanıcının girdiği inputun sayı olması gerektiğini denetleyen js fonksiyonu
+    <script>
+    document.getElementById('tcKimlikNo').addEventListener('keydown', function(event) {
+        if ((event.key >= '0' && event.key <= '9') || event.key == "Backspace") {
+           return true;
+        } else {
+            event.preventDefault();
+            return false;
+        }
+    });
+</script>
+
+</script>
+}
+
+
+
+
+

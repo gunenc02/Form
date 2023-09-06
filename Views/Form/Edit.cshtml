@@ -1,0 +1,105 @@
+﻿
+@model Bahadır_webForm.Models.Information;
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<!-- Bu sayfa adminlerin kullanıcıları bilgilerini düzenleyebilecekleri sayfa -->
+<!-- Bu sayfada iki tane input kontrolü vardır, birinci olarak kullanıcıların rakam girmesi gereken yerlerde sadece rakam inputları kabul eden bir
+    js kodu, ikinci olarak kullanıcıların sadece harf girmeleri gereken yerlerde bulunan bir js kodu bulunmakta
+    Sadece sayıgirilmesi gereken durumlarda kullanıcının telefon numarası mı yoksa tc kimlik numarası mı girdiği tespit edilip ona göre de 
+    regular expression uygulanmıştır
+-->
+<!-- Asp.net form kullanılmıştır -->
+
+<link rel="stylesheet" href="~/css/Containers/Stylesheet.css" />
+<style>
+.Area, .Number{
+    width:50%;
+    float:right;
+}
+</style>
+
+
+<div style="
+    position:fixed;
+    width:500px;
+    height: 500px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display:block;">
+    
+
+        <h4>Kayıt Bilgileri</h4>
+        <hr />
+        <form asp-action="Edit"  method="post" asp-controller="Form" autocomplete="off">
+                <label class="textLine">Adınız: </label>
+                <input asp-for=Name type="text" id="name" onpaste="return false" class="Area" placeholder="Adınız" required/>
+            <br/><br/>
+                <label class="textLine">Soyadınız:</label>
+                <input asp-for=Surname type="text" id="surname"  onpaste="return false" class="Area" placeholder="Soyadınız" required/>
+            <br/><br/>
+                <label class="textLine">Telefon Numaranız:</label>
+                <input asp-for=PhoneNumber type="text" id="phoneNumber"  maxlength="14"  onpaste="return false" class="Number" placeholder="Telefon Numaranız" required/>
+            <br/><br/>
+                <label class="textLine">TC Kimlik Numaranız:</label>
+                <input asp-for=Ssn type="text" id="ssn"  maxlength="11"  onpaste="return false" class="Number" placeholder="Tc Kimlik Numaranız" required/>
+            <br/><br/>
+                <label class="textLine">Doğum Tarihiniz:</label>
+                <input asp-for=Date type="date" id="date" class="Area" required/>
+            <br/><br/>
+            <div class="form-group">
+                <input type="submit" value="Kaydet" class="btn btn-primary" style="margin-left:10%;"/>   
+                <a href="@Url.Action("ShowTable", "Form", new {@isMessageDisplayed = false})" class="btn btn-danger" style="margin-right:10%; float:right">Listeye Dön</a>
+            </div>
+        </form>
+</div>
+
+<script>
+    // sadece harf girilmesi gereken durumlarda çalışacak js kodu
+
+    let textListen = document.getElementsByClassName('Area');
+    for (let i = 0; i < textListen.length; i++) {
+        textListen[i].addEventListener('keydown', function(event) {
+            if (
+                    (event.key >= 'a' && event.key <= 'z') || event.key === 'ı' || event.key === 'İ' || event.key === 'ö' || event.key === 'Ö' || event.key === 'ü' || event.key === 'Ü' ||  
+                    (event.key >= 'A' && event.key <= 'Z') || event.key === 'ç' || event.key === 'Ç' || event.key === 'ğ' || event.key === 'Ğ' || event.key === 'Ş' || event.key === 'ş'
+                ) {
+                    // Allow the key press      
+                    return true;
+                }
+                // Prevent the key press
+                event.preventDefault();
+                return false;
+            })  //
+    }
+</script>
+
+<script>
+    // sadece sayı girilmesi gereken durumlarda çalışacak olan js kodu
+    // kullanıcı telefon numarası giriyorsa eğer regular expression olarak kullanıcıya yansıtılır
+    let numberListen = document.getElementsByClassName('Number');
+    for (let i = 0; i < numberListen.length; i++) {
+        numberListen[i].addEventListener('keydown', function(event) {
+            if (numberListen[i].id === 'phoneNumber') {
+                let x = event.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+                event.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? ' ' + x[3] : '');
+            }
+
+            if ((event.key >= '0' && event.key <= '9') || event.key == "Backspace" || event.key == "ArrowLeft" || event.key == "ArrowRight") {
+                return true;
+            }
+            else {
+                event.preventDefault();
+                return false;
+            }
+        }); 
+    }  
+</script>
+
+
+
+
+
